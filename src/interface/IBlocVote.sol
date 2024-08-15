@@ -31,7 +31,7 @@ interface IBlocVote {
 
     
     // administration
-    function changeChairman(address _newChairman) external;
+    function initializeChairman(address _newChairman) external;
     
     // candidate
     function registerCandidate(string calldata _name, uint _officeId) external;

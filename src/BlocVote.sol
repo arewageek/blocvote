@@ -4,7 +4,8 @@ pragma solidity ^0.8.24;
 import {IBlocVote} from './interface/IBlocVote.sol';
 
 contract BlocVote is IBlocVote {
-    address public chairman;
+    address public immutable deployer = msg.sender;
+    address public immutable chairman;
 
     Vote[] public votes;
     Candidate[] public candidates;
@@ -15,11 +16,11 @@ contract BlocVote is IBlocVote {
         _;
     }
 
-    constructor() {
-        chairman = msg.sender;
+    constructor(address _deployer) {
+        chairman = _deployer;
     }
 
-    function changeChairman(address _newChairman) external {
+    function initializeChairman(address _newChairman) external {
         chairman = _newChairman;
     }
 
