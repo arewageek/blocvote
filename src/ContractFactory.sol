@@ -1,16 +1,24 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.24;
+pragma solidity ^0.8.24;
 
-import {BlocVote} from './BlocVote';
+import {BlocVote} from './BlocVote.sol';
 
 contract ContractFactory {
-    BlockVote[] blocvoteContracts;
+    BlocVote[] public blocvoteContracts;
+
+    event BlocVoteDeployed(address indexed chairman, address indexed blocVote);
 
     function deploy() external returns (address) {
-        address contr = new BlocVote(msg.sender);
-        blocvoteContracts.push(contr);
+        BlocVote blocVote = new BlocVote(msg.sender);
+        blocvoteContracts.push(blocVote);
 
-        return contr;
+        emit BlocVoteDeployed(msg.sender, address(blocVote));
+
+        return address(blocVote);
+    }
+
+    function deployedCount() external view returns (uint) {
+        return blocvoteContracts.length;
     }
 }
