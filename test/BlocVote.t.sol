@@ -12,8 +12,8 @@ contract BlocVoteTest is Test {
     address newChairman = address(0xC4A2);
     address attacker = address(0xBAD);
 
-    uint constant PRESIDENT = 0;
-    uint constant SENATOR = 1;
+    uint256 constant PRESIDENT = 0;
+    uint256 constant SENATOR = 1;
 
     function setUp() public {
         blocVote = new BlocVote(chairman);
@@ -27,7 +27,7 @@ contract BlocVoteTest is Test {
         vm.stopPrank();
     }
 
-    function _vote(uint candidateId, uint officeId, uint voterId)
+    function _vote(uint256 candidateId, uint256 officeId, uint256 voterId)
         internal
         pure
         returns (IBlocVote.Vote[] memory ballot)
@@ -165,7 +165,7 @@ contract BlocVoteTest is Test {
         vm.prank(chairman);
         blocVote.castVote(_vote(0, PRESIDENT, 777));
 
-        (uint candidateId, uint officeId, uint voterId) = blocVote.votes(0);
+        (uint256 candidateId, uint256 officeId, uint256 voterId) = blocVote.votes(0);
         assertEq(candidateId, 0);
         assertEq(officeId, PRESIDENT);
         assertEq(voterId, 777);
@@ -229,7 +229,7 @@ contract BlocVoteTest is Test {
         assertEq(blocVote.candidateResult(0), 2, "Alice");
         assertEq(blocVote.candidateResult(1), 1, "Bob");
 
-        (,,,, uint storedVotes) = blocVote.candidates(0);
+        (,,,, uint256 storedVotes) = blocVote.candidates(0);
         assertEq(storedVotes, 2);
     }
 
@@ -261,7 +261,7 @@ contract BlocVoteTest is Test {
         IBlocVote.Result[] memory results = blocVote.getResult();
         assertEq(results.length, 2, "removed candidate must not occupy a slot");
 
-        for (uint i; i < results.length; i++) {
+        for (uint256 i; i < results.length; i++) {
             assertTrue(results[i].candidateId != 1, "removed candidate leaked into results");
         }
     }
@@ -269,8 +269,8 @@ contract BlocVoteTest is Test {
     // --- 2E. Candidate count per office ---
 
     function test_OfficeCandidateCountIncrements() public {
-        (,,, uint presidentCount) = blocVote.offices(PRESIDENT);
-        (,,, uint senatorCount) = blocVote.offices(SENATOR);
+        (,,, uint256 presidentCount) = blocVote.offices(PRESIDENT);
+        (,,, uint256 senatorCount) = blocVote.offices(SENATOR);
 
         assertEq(presidentCount, 2, "President has Alice and Bob");
         assertEq(senatorCount, 1, "Senator has Carol");
@@ -573,7 +573,7 @@ contract BlocVoteTest is Test {
     function test_MultiOfficeSingleBatchSucceeds() public {
         IBlocVote.Vote[] memory ballot = new IBlocVote.Vote[](2);
         ballot[0] = IBlocVote.Vote({candidateId: 0, officeId: PRESIDENT, voterId: 42});
-        ballot[1] = IBlocVote.Vote({candidateId: 2, officeId: SENATOR,   voterId: 42});
+        ballot[1] = IBlocVote.Vote({candidateId: 2, officeId: SENATOR, voterId: 42});
 
         vm.prank(chairman);
         blocVote.castVote(ballot);
@@ -662,8 +662,8 @@ contract BlocVoteTest is Test {
         blocVote.castVote(_vote(0, PRESIDENT, 101));
         blocVote.castVote(_vote(0, PRESIDENT, 102));
         blocVote.castVote(_vote(0, PRESIDENT, 103));
-        blocVote.castVote(_vote(2, SENATOR,   101));
-        blocVote.castVote(_vote(2, SENATOR,   102));
+        blocVote.castVote(_vote(2, SENATOR, 101));
+        blocVote.castVote(_vote(2, SENATOR, 102));
         vm.stopPrank();
 
         assertEq(blocVote.votesCount(), 5);
@@ -691,14 +691,14 @@ contract BlocVoteTest is Test {
     function testFuzz_EachVoterCountsExactlyOncePerOffice(uint8 voterCount) public {
         vm.assume(voterCount > 0);
 
-        for (uint i; i < voterCount; i++) {
+        for (uint256 i; i < voterCount; i++) {
             vm.prank(chairman);
             blocVote.castVote(_vote(0, PRESIDENT, i));
         }
 
         assertEq(blocVote.candidateResult(0), voterCount);
 
-        for (uint i; i < voterCount; i++) {
+        for (uint256 i; i < voterCount; i++) {
             vm.expectRevert("already voted");
             vm.prank(chairman);
             blocVote.castVote(_vote(1, PRESIDENT, i));

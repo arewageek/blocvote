@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.24;
 
-import {BlocVote} from './BlocVote.sol';
+import {BlocVote} from "./BlocVote.sol";
 
 /// @title ContractFactory
 /// @notice Deploys and tracks independent BlocVote election instances.

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.24;
 
-import {IBlocVote} from './interface/IBlocVote.sol';
+import {IBlocVote} from "./interface/IBlocVote.sol";
 
 /// @title BlocVote
 /// @notice On-chain election contract that stores candidates, offices, and votes.
@@ -107,13 +107,7 @@ contract BlocVote is IBlocVote {
         require(offices[_officeId].isValid, "Office invalid");
 
         uint256 id = candidates.length;
-        candidates.push(Candidate({
-            id: id,
-            name: _name,
-            officeId: _officeId,
-            votes: 0,
-            isValid: true
-        }));
+        candidates.push(Candidate({id: id, name: _name, officeId: _officeId, votes: 0, isValid: true}));
 
         offices[_officeId].candidatesCount++;
         emit CandidateRegistered(id, _officeId, _name);
@@ -146,12 +140,7 @@ contract BlocVote is IBlocVote {
         require(bytes(_name).length > 0, "name required");
 
         uint256 id = offices.length;
-        offices.push(Office({
-            id: id,
-            name: _name,
-            isValid: true,
-            candidatesCount: 0
-        }));
+        offices.push(Office({id: id, name: _name, isValid: true, candidatesCount: 0}));
 
         emit OfficeRegistered(id, _name);
     }
@@ -194,10 +183,7 @@ contract BlocVote is IBlocVote {
             require(v.officeId < offices.length, "invalid office id");
             require(candidates[v.candidateId].isValid, "Candidate invalid");
             require(offices[v.officeId].isValid, "Office invalid");
-            require(
-                candidates[v.candidateId].officeId == v.officeId,
-                "candidate does not contest this office"
-            );
+            require(candidates[v.candidateId].officeId == v.officeId, "candidate does not contest this office");
             require(!hasVoted[v.voterId][v.officeId], "already voted");
 
             hasVoted[v.voterId][v.officeId] = true;
@@ -233,12 +219,7 @@ contract BlocVote is IBlocVote {
         for (uint256 i; i < candidates.length; i++) {
             Candidate storage c = candidates[i];
             if (c.isValid) {
-                results[cursor] = Result({
-                    candidateId: i,
-                    candidateName: c.name,
-                    officeId: c.officeId,
-                    votes: c.votes
-                });
+                results[cursor] = Result({candidateId: i, candidateName: c.name, officeId: c.officeId, votes: c.votes});
                 cursor++;
             }
         }
